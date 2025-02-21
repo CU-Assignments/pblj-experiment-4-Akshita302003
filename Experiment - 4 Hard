@@ -1,0 +1,48 @@
+hard level 
+import java.util.concurrent.locks.*;
+
+class TicketBooking implements Runnable {
+    private static int seats = 5;
+    private static final Lock lock = new ReentrantLock();
+    private String name;
+
+    TicketBooking(String name) {
+        this.name = name;
+    }
+
+    public void run() {
+        lock.lock();
+        try {
+            if (seats > 0) {
+                System.out.println(name + " booked seat " + seats);
+                seats--;
+            } else {
+                System.out.println(name + " No seats available.");
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+public class TicketSystem {
+    public static void main(String[] args) {
+        Thread vip1 = new Thread(new TicketBooking("VIP 1"));
+        Thread vip2 = new Thread(new TicketBooking("VIP 2"));
+        Thread user1 = new Thread(new TicketBooking("User 1"));
+        Thread user2 = new Thread(new TicketBooking("User 2"));
+        Thread user3 = new Thread(new TicketBooking("User 3"));
+
+        vip1.setPriority(Thread.MAX_PRIORITY);
+        vip2.setPriority(Thread.MAX_PRIORITY);
+        user1.setPriority(Thread.NORM_PRIORITY);
+        user2.setPriority(Thread.NORM_PRIORITY);
+        user3.setPriority(Thread.NORM_PRIORITY);
+
+        vip1.start();
+        vip2.start();
+        user1.start();
+        user2.start();
+        user3.start();
+    }
+}
